@@ -1,4 +1,5 @@
-
+import functools
+import threading
 
 
 
@@ -67,7 +68,6 @@ def create_engine(user, password, database, host='127.0.0.1', port=3306, **kw):
     import mysql.connector
     global engine
     if engine is not None:
-        # todo DBError
         raise DBError('Engine is already initialized.')
     params = dict(user=user, password=password, database=database, host=host, port=port)
     defaults = dict(use_unicode=True, charset='utf8', collation='utf8_general_ci', autocommit=False)
@@ -167,7 +167,7 @@ def with_connection(func):
     @functools.wraps(func)
     def _wrapper(*args, **kw):
         # why bother define connection()?
-        with _ConnectionCtx():
+        with _ConnectionContext():
             return func(*args, **kw)
     return _wrapper
 
@@ -277,5 +277,5 @@ class Dict(dict):
 class DBError(Exception):
     pass
 
-class MultiColumnsError(DBError):
+class MultipleColumnsError(DBError):
     pass
